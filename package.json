@@ -1,0 +1,13 @@
+{
+  "name": "gns-event-rentals",
+  "version": "1.0.1",
+  "private": true,
+  "description": "GNS Event Rentals \u2014 a bespoke rental showroom and quote website",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node preview.js"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}
