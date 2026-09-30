@@ -1,6 +1,6 @@
 {
   "name": "gns-event-rentals",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "GNS Event Rentals \u2014 a bespoke rental showroom and quote website",
   "scripts": {

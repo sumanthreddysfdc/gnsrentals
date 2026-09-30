@@ -1,5 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
+const assetVersions = new Map();
+function assetUrl(name) {
+ if(!assetVersions.has(name)) assetVersions.set(name,crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'assets',name))).digest('hex').slice(0,12));
+ return '/assets/'+name+'?v='+assetVersions.get(name);
+}
 const config = require('./assets/config.js');
 const products = require('./assets/catalog.js');
 const out = path.join(__dirname, 'public');
@@ -14,7 +20,7 @@ if(rawUrl) { const u=new URL(rawUrl); if(u.protocol!=='https:') throw new Error(
 const bag = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></svg>';
 const star = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M5 19 19 5"/></svg>';
 function brandMarkup() {
- return config.logoImage ? `<span class="brand-mark"><img src="${escape(config.logoImage)}" alt="GNS Event Rentals" width="1254" height="1254"></span><span class="brand-sub">EVENT RENTALS</span>` : '<span class="brand-name">GNS<span class="brand-spark">✧</span></span><span class="brand-sub">EVENT RENTALS</span>';
+ return config.logoImage ? `<span class="brand-mark" style="display:block;position:relative;width:var(--logo-width,126px);height:var(--logo-height,73px);overflow:hidden;flex-shrink:0"><img src="${escape(config.logoImage)}" alt="GNS Event Rentals" width="157" height="157" style="position:absolute;display:block;width:var(--logo-image-size,157px);height:var(--logo-image-size,157px);max-width:none;left:var(--logo-image-left,-16.5px);top:var(--logo-image-top,-39.7px);object-fit:contain"></span><span class="brand-sub">EVENT RENTALS</span>` : '<span class="brand-name">GNS<span class="brand-spark">✧</span></span><span class="brand-sub">EVENT RENTALS</span>';
 }
 function chrome(route) { return `<a class="skip-link" href="#main">Skip to content</a>
 <div class="announcement"><span>Thoughtfully curated rentals. Beautifully personal celebrations.</span><span class="announcement-area">Washington, DC &amp; Northern Virginia</span></div>
@@ -43,7 +49,7 @@ function page(route,title,description,content,options={}) {
  routes.push(route);
  const canonical=base?`<link rel="canonical" href="${base}${route==='/'?'/':route}"><meta property="og:url" content="${base}${route==='/'?'/':route}">`:'';
  const schema = options.schema || {'@context':'https://schema.org','@type':'WebPage',name:title,description,...(base?{url:base+route}: {})};
- const doc=`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(title)}</title><meta name="description" content="${escape(description)}"><meta name="theme-color" content="#183b32">${options.noindex?'<meta name="robots" content="noindex,follow">':''}${canonical}<meta property="og:type" content="website"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}">${base?`<meta property="og:image" content="${base}/assets/images/celebration-hero.webp">`:''}<meta name="twitter:card" content="summary_large_image">${config.searchConsoleVerification?`<meta name="google-site-verification" content="${escape(config.searchConsoleVerification)}">`:''}<link rel="icon" href="${escape(config.logoImage||'/assets/favicon.svg')}" type="${config.logoImage?'image/png':'image/svg+xml'}">${route==='/'?'<link rel="preload" as="image" href="/assets/images/celebration-hero.webp">':''}<link rel="stylesheet" href="/assets/style.css"><script type="application/ld+json">${JSON.stringify(schema).replace(/</g,'\\u003c')}</script><script src="/assets/config.js" defer></script><script src="/assets/catalog.js" defer></script><script src="/assets/app.js" defer></script></head><body data-page="${escape(route)}">${chrome(route)}<main id="main">${content}</main>${footer()}</body></html>`;
+ const doc=`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(title)}</title><meta name="description" content="${escape(description)}"><meta name="theme-color" content="#183b32">${options.noindex?'<meta name="robots" content="noindex,follow">':''}${canonical}<meta property="og:type" content="website"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}">${base?`<meta property="og:image" content="${base}/assets/images/celebration-hero.webp">`:''}<meta name="twitter:card" content="summary_large_image">${config.searchConsoleVerification?`<meta name="google-site-verification" content="${escape(config.searchConsoleVerification)}">`:''}<link rel="icon" href="${escape(config.logoImage||'/assets/favicon.svg')}" type="${config.logoImage?'image/png':'image/svg+xml'}">${route==='/'?'<link rel="preload" as="image" href="/assets/images/celebration-hero.webp">':''}<link rel="stylesheet" href="${assetUrl('style.css')}"><script type="application/ld+json">${JSON.stringify(schema).replace(/</g,'\\u003c')}</script><script src="${assetUrl('config.js')}" defer></script><script src="${assetUrl('catalog.js')}" defer></script><script src="${assetUrl('app.js')}" defer></script></head><body data-page="${escape(route)}">${chrome(route)}<main id="main">${content}</main>${footer()}</body></html>`;
  const file=route==='/'?'index.html':route.slice(1)+'.html';
  fs.mkdirSync(path.dirname(path.join(out,file)),{recursive:true});fs.writeFileSync(path.join(out,file),doc);
  // Root static pages make the archive easy to inspect, and let Drop detect index.html.
