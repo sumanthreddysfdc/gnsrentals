@@ -32,14 +32,13 @@ The cart, estimated totals, quantities, filters, market selection and downloadab
 | Variable | Value |
 | --- | --- |
 | `RESEND_API_KEY` | The secret Resend key |
-| `QUOTE_TO_EMAIL` | The client's real inbox. Multiple recipients may be comma-separated. |
-| `QUOTE_FROM_EMAIL` | A verified sender, e.g. `GNS Event Rentals <quotes@CLIENT-DOMAIN>` |
+| `QUOTE_FROM_EMAIL` | A verified sender, e.g. `GNS Event Rentals <support@gnsrental.com>` |
 | `SITE_URL` | The final HTTPS website URL, e.g. `https://CLIENT-DOMAIN` without a trailing slash |
 
 5. Redeploy the current deployment so these settings take effect. The API remains server-side; never put a secret in `assets/config.js`.
 6. Send one clearly labeled TEST request yourself. Check that it arrives in the GNS inbox, that the correct market and rental quantities appear, and that replying goes to the customer's email. Delete the test from your inbox when finished.
 
-The website sends one quote email to the configured business inbox. It does not send customer confirmation emails, charge a card, write a CRM record, or reserve inventory. The onscreen reference identifies the submitted email request. Email-provider acceptance does not guarantee inbox placement; verify delivery during setup.
+The website sends one quote email to `support@gnsrental.com`, the company email in `assets/config.js`. `QUOTE_TO_EMAIL` is no longer used. The customer’s email becomes Reply-To, so replying to the notification contacts that customer. It does not send customer confirmation emails, charge a card, write a CRM record, or reserve inventory. The onscreen reference identifies the submitted email request. Email-provider acceptance does not guarantee inbox placement; verify delivery during setup.
 
 For a public production launch, set a Vercel Firewall rate-limit rule for `POST /api/quote`. The included honeypot, origin checks, validation and per-instance throttling are a baseline; the in-memory throttle does not provide a shared limit across server instances. Configure provider/hosting usage limits in the client's accounts.
 

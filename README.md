@@ -29,7 +29,7 @@ Run the build after changes. Root HTML files are generated alongside `public` fo
 
 Canonical URLs and sitemap use `SITE_URL`, the configured `siteUrl`, or Vercel's production domain. Set `SITE_URL` to the final HTTPS custom domain after it is connected. Optional Google Analytics only loads after consent. Add the real Google Analytics and Search Console IDs to the public config when available.
 
-Online quote delivery requires Vercel environment variables `RESEND_API_KEY`, `QUOTE_TO_EMAIL` and `QUOTE_FROM_EMAIL`. Without them, the form clearly says the request was not sent and offers a downloadable copy and an email draft. Contact details and form notes are not tracked by analytics.
+Online quote delivery requires Vercel environment variables `RESEND_API_KEY` and `QUOTE_FROM_EMAIL`. Every valid quote submission emails the company address in `assets/config.js` (`support@gnsrental.com`), with the customer’s address as Reply-To. `QUOTE_TO_EMAIL` is no longer needed and cannot redirect notifications. `GET /api/quote` provides a read-only readiness check without exposing credentials. Without the required sending settings, the form clearly says the request was not sent and offers a downloadable copy and an email draft. Contact details and form notes are not tracked by analytics.
 
 ## Editorial notes
 

@@ -35,7 +35,11 @@ test('quote API requires a guest count and recomputes trusted prices',async()=>{
  assert.equal((await call({...body,guests:''})).status,400);
  assert.equal((await call({...body,items:[{id:'gold-chiavari-chair',quantity:0}]})).status,400);
  const keys=['RESEND_API_KEY','QUOTE_TO_EMAIL','QUOTE_FROM_EMAIL'];const old=keys.map(k=>process.env[k]);const oldFetch=global.fetch;let sent;
- try{process.env.RESEND_API_KEY='test-only';process.env.QUOTE_TO_EMAIL='test@example.com';process.env.QUOTE_FROM_EMAIL='test@example.com';global.fetch=async(url,options)=>{assert.equal(url,'https://api.resend.com/emails');sent=JSON.parse(options.body);return{ok:true,json:async()=>({id:'mocked-email'})}};
- const result=await call(body);assert.equal(result.status,200);assert.match(sent.text,/Estimated 24-hour rental subtotal: \$18\.00/);assert.match(sent.text,/Guest count: 100/);
+ try{process.env.RESEND_API_KEY='test-only';process.env.QUOTE_TO_EMAIL='old-inbox@example.com';process.env.QUOTE_FROM_EMAIL='test@example.com';global.fetch=async(url,options)=>{assert.equal(url,'https://api.resend.com/emails');sent=JSON.parse(options.body);return{ok:true,json:async()=>({id:'mocked-email'})}};
+ const result=await call(body);assert.equal(result.status,200);assert.match(sent.text,/Estimated 24-hour rental subtotal: \$18\.00/);assert.match(sent.text,/Guest count: 100/);assert.deepEqual(sent.to,['support@gnsrental.com']);assert.equal(sent.reply_to,body.email);
+ delete process.env.QUOTE_TO_EMAIL;assert.equal((await call(body)).status,200);
+ global.fetch=async()=>({ok:false,json:async()=>({message:'Provider failure'})});assert.equal((await call(body)).status,502);
+ delete process.env.RESEND_API_KEY;assert.equal((await call(body)).status,503);
+ let health;await handler({method:'GET',headers:{}},{setHeader(){},status(n){assert.equal(n,200);return this},json(v){health=v}});assert.deepEqual(health,{ok:true,emailConfigured:false});
  }finally{keys.forEach((k,i)=>old[i]===undefined?delete process.env[k]:process.env[k]=old[i]);global.fetch=oldFetch}
 });
