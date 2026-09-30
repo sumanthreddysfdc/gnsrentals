@@ -43,14 +43,14 @@ const difference = [
 ];
 const story = [
  'GNS Event Rentals began long before we ever thought of it as a business.',
- 'For years, we—Gbenga and Shola—have shared a genuine love for entertaining, celebrating and creating beautiful spaces for the people we love. Whether we were decorating for our granddaughter’s birthday, celebrating graduations and milestone birthdays, hosting family and friends, or preparing for one of our children’s weddings, we have always enjoyed the details that make an occasion feel special.',
+ 'For years, we—Ben and Heavn—have shared a genuine love for entertaining, celebrating and creating beautiful spaces for the people we love. Whether we were decorating for our granddaughter’s birthday, celebrating graduations and milestone birthdays, hosting family and friends, or preparing for one of our children’s weddings, we have always enjoyed the details that make an occasion feel special.',
  'And over the years, something else happened: we started collecting.',
  'A beautiful serving piece here. A unique table setting there. Special décor we couldn’t resist. Items we discovered while traveling or preparing for another family celebration. Before we knew it, our collection had grown into an assortment of distinctive pieces gathered from different places and different chapters of our family’s life.',
  'Then, as we began preparing for our own upcoming wedding anniversary celebration, we found ourselves doing it all over again—searching for beautiful pieces, purchasing unique items and imagining how everything would come together.',
  'That was when we realized something:',
  'Why keep all of this beauty to ourselves?',
  'What had always been a passion could become something we shared with other families.',
- 'And that is how GNS Event Rentals—Gbenga N Shola—was born.',
+ 'And that is how GNS Event Rentals—Ben N Heavn—was born.',
  'GNS is an extension of something we’ve already been doing for years: bringing people together and making life’s special moments beautiful.',
  'We understand that celebrations aren’t simply about tables, chairs, linens or décor. They’re about the people gathered around those tables. They’re about welcoming family from near and far, watching a child graduate, celebrating another year of life, witnessing two families come together through marriage, and creating memories that will be talked about for years to come.',
  'That’s the heart behind GNS.',
