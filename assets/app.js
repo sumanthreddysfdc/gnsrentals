@@ -52,7 +52,20 @@
   });
   $$('[data-market-select]').forEach(select=>select.addEventListener('change',()=>setMarket(select.value)));
   const menu=$('.menu-toggle');menu.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close navigation':'Open navigation');$('#nav').classList.toggle('open',open)});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.getAttribute('aria-expanded')==='true'){menu.click();menu.focus()}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.getAttribute('aria-expanded')==='true'&&!document.querySelector('.nav-trigger[aria-expanded="true"]')){menu.click();menu.focus()}});
+  // Accessible click/keyboard dropdowns also work on touch devices.
+  const triggers=$$('.nav-trigger');
+  function closeDropdowns(except=null){triggers.forEach(t=>{if(t!==except){t.setAttribute('aria-expanded','false');document.getElementById(t.getAttribute('aria-controls')).hidden=true}})}
+  triggers.forEach(t=>t.addEventListener('click',()=>{const open=t.getAttribute('aria-expanded')!=='true';closeDropdowns(t);t.setAttribute('aria-expanded',String(open));document.getElementById(t.getAttribute('aria-controls')).hidden=!open}));
+  document.addEventListener('click',e=>{if(!e.target.closest('.nav-dropdown'))closeDropdowns()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){const active=triggers.find(t=>t.getAttribute('aria-expanded')==='true');if(active){closeDropdowns();active.focus()}}});
+  menu.addEventListener('click',()=>{if(menu.getAttribute('aria-expanded')==='false')closeDropdowns()});
+  const searchDialog=$('#search-dialog');let searchFocus;
+  $$('[data-open-search]').forEach(b=>b.addEventListener('click',()=>{searchFocus=document.activeElement;searchDialog.showModal();document.body.classList.add('modal-open');$('#site-search').focus()}));
+  $('[data-close-search]').addEventListener('click',()=>searchDialog.close());
+  searchDialog.addEventListener('close',()=>{document.body.classList.remove('modal-open');searchFocus?.focus()});
+  searchDialog.addEventListener('click',e=>{if(e.target===searchDialog){const r=searchDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)searchDialog.close()}});
+  if($('#catalog-search')&&params.has('q'))$('#catalog-search').value=params.get('q').slice(0,100);
   function filterCatalog(){
     const holder=$('#catalog-grid');if(!holder)return;
     const query=($('#catalog-search')?.value||'').trim().toLowerCase();
@@ -72,6 +85,14 @@
   const form=$('#quote-form');
   if(form){
     const date=form.elements.date,endDate=form.elements.endDate;date.min=localDate();endDate.min=localDate();
+    const collection=params.get('collection');
+    const occasions={'weddings':'Wedding','nikkah-walimat':'Walimat-ul-Nikkah','birthdays-milestones':'Birthday','baby-bridal-showers':'Baby / bridal shower','graduations':'Graduation','corporate-events':'Corporate event','cultural-celebrations':'Cultural celebration'};
+    if(Object.hasOwn(occasions,collection))form.elements.occasion.value=occasions[collection];
+    const categoryNames={'chairs':'Chairs','tables':'Tables','linens-napkins':'Linens & Napkins','charger-plates':'Charger Plates','dinnerware':'Dinnerware','flatware':'Flatware','glassware':'Glassware','catering-chafers':'Chafing Dishes & Catering','centerpieces-vases':'Centerpieces & Vases','backdrops-arches':'Backdrops & Arches','pedestals-displays':'Pedestals & Display Stands','cake-dessert-displays':'Cake & Dessert Displays','lounge-specialty':'Lounge & Specialty Furniture','decor-accessories':'Décor & Accessories','tabletop':'Tabletop','specialty-rentals':'Specialty Rentals'};
+    if(Object.hasOwn(categoryNames,params.get('category')))form.elements.notes.value='Interested in '+categoryNames[params.get('category')]+'. Styles and quantities: ';
+    if(params.get('look')==='gold-white')form.elements.notes.value='Gold & White Collection: please review gold charger plates, gold flatware, gold-accented centerpieces and napkins, along with my selected pieces. Additional quantities and styles: ';
+    const style=params.get('style');if(['Modern Black & Gold','Romantic Blush','Timeless White','Royal Blue & Gold','Garden Romance'].includes(style))form.elements.notes.value='Preferred palette: '+style+'. Requested pieces and quantities: ';
+
     date.addEventListener('change',()=>{endDate.min=date.value||localDate();endDate.setCustomValidity('')});
     endDate.addEventListener('change',()=>endDate.setCustomValidity(endDate.value&&date.value&&endDate.value<date.value?'Return date must be on or after the event date.':''));
     form.addEventListener('submit',async e=>{

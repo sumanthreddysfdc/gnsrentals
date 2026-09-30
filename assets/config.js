@@ -4,9 +4,11 @@ const GNS_CONFIG = {
   logoImage: '/assets/images/gns-logo.png',
   siteUrl: '', // Your final HTTPS domain, without a trailing slash.
   address: { streetAddress: '2500 Vantage Dr', addressLocality: 'Woodbridge', addressRegion: 'VA', postalCode: '22191', addressCountry: 'US' },
-  email: '', // Client's real quote inbox; enables an email-draft fallback.
+  email: 'support@gnsevents.rentals.com', // Business contact provided by GNS; quote delivery is configured separately on Vercel.
   phone: '',
-  instagramUrl: '',
+  instagramUrl: 'https://www.instagram.com/gnseventrentals/',
+  facebookUrl: '', // Add the official profile URL when available.
+  tiktokUrl: '',
   googleAnalyticsId: '', // G-XXXXXXXXXX; loads only with visitor consent.
   searchConsoleVerification: '',
   rentalPeriod: '24-hour rental',

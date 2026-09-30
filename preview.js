@@ -1,7 +1,7 @@
 /* Optional local preview: node preview.js. No external packages required. */
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const handler=require('./api/quote.js');const root=path.join(__dirname,'public');
-const types={'.html':'text/html;charset=utf-8','.css':'text/css','.js':'text/javascript','.webp':'image/webp','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
+const types={'.html':'text/html;charset=utf-8','.css':'text/css','.js':'text/javascript','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.xml':'application/xml','.txt':'text/plain'};
 http.createServer(async(req,res)=>{
  const url=new URL(req.url,'http://localhost');
  if(url.pathname==='/api/quote'){
